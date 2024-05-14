@@ -5,9 +5,28 @@
     "apps/*"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint apps/frontend/**/*.{ts,tsx} --report-unused-disable-directives --max-warnings 0",
+    "format": "prettier 'apps/frontend/src/**/*.{tsx,ts,jsx,js,mjs,cjs,json}' --write"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@commitlint/cli": "^19.3.0",
+    "@commitlint/config-conventional": "^19.2.2",
+    "@typescript-eslint/eslint-plugin": "^7.9.0",
+    "@typescript-eslint/parser": "^7.9.0",
+    "eslint": "^9.2.0",
+    "eslint-config-prettier": "^9.1.0",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
+    "prettier": "^3.2.5",
+    "pretty-quick": "^4.0.0"
+  },
+  "lint-staged": {
+    "**/*.{js,ts,tsx,json}": [
+      "eslint --fix",
+      "prettier --write --ignore-unknown"
+    ]
+  }
 }
