@@ -1,6 +1,5 @@
 import typescriptParser from '@typescript-eslint/parser';
 import typescriptPlugin from '@typescript-eslint/eslint-plugin';
-import prettierConfig from 'eslint-config-prettier';
 
 export default [
   {
@@ -17,9 +16,16 @@ export default [
       "@typescript-eslint": typescriptPlugin,
     },
     rules: {
-      ...typescriptPlugin.configs.recommended.rules,
-      ...prettierConfig.rules,
-      // Define your custom rules here
+      "@typescript-eslint/no-explicit-any": "off",
+      '@typescript-eslint/comma-dangle': 'off',
+      '@typescript-eslint/strict-boolean-expressions': 'off',
+      '@typescript-eslint/prefer-nullish-coalescing': 'off',
+      '@typescript-eslint/space-before-function-paren': 'off',
+      '@typescript-eslint/indent': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+
+      'no-unused-vars': 'off',
+
     },
     settings: {
       "import/resolver": {
