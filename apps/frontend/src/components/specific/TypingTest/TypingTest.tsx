@@ -10,20 +10,13 @@ const textContent =
 
 const TypingTest: FC<IProps> = (): JSX.Element => {
   const [inputValue, setInputValue] = useState('')
-  const [isTyping, setIsTyping] = useState(false)
+  const [charIndex, setCharIndex] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
-  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const handleInput = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
     setInputValue(value)
-    setIsTyping(true)
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current)
-    }
-    typingTimeoutRef.current = setTimeout(() => {
-      setIsTyping(false)
-    }, 500)
+    setCharIndex(value.length)
   }, [])
 
   useEffect(() => {
