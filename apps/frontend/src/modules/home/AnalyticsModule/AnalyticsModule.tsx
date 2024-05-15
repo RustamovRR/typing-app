@@ -2,11 +2,14 @@
 
 import { FC, useEffect } from 'react'
 import { useTypingStore } from '@/store'
+import { useCalculateAccuracy, useCalculateWPM } from './hooks'
 
 interface IProps {}
 
 const TypingContentModule: FC<IProps> = (): JSX.Element => {
-  const { timer, isTypingStarted, updateTypingState } = useTypingStore((state) => state)
+  const { timer, isTypingStarted, updateTypingState, correctChars, totalChars } = useTypingStore((state) => state)
+  const wpm = useCalculateWPM()
+  const accuracy = useCalculateAccuracy()
 
   useEffect(() => {
     let timerId: NodeJS.Timeout | null = null
@@ -21,8 +24,8 @@ const TypingContentModule: FC<IProps> = (): JSX.Element => {
   return (
     <div className="flex gap-3 mt-5">
       <h1>Anayltics Test</h1>
-      <div>WPM: 10</div>
-      <div>ACC: 100%</div>
+      <div>WPM: {wpm}</div>
+      <div>ACC: {accuracy ?? 100}%</div>
       <div>Time: {timer}s</div>
     </div>
   )

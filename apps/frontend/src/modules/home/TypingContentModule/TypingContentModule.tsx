@@ -1,6 +1,6 @@
 'use client'
 
-import { cn } from '@/lib/utils'
+import { cn, determineCorrectness } from '@/lib/utils'
 import { useTypingStore } from '@/store'
 import { ChangeEvent, FC, useCallback, useEffect, useRef } from 'react'
 
@@ -12,19 +12,17 @@ const textContent =
 const TypingContentModule: FC<IProps> = (): JSX.Element => {
   const { charIndex, inputValue, isTyping, updateTypingState, isTypingStarted } = useTypingStore((state) => state)
   const inputRef = useRef<HTMLInputElement>(null)
-  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const handleInput = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
     updateTypingState('inputValue', value)
     updateTypingState('charIndex', value.length)
     updateTypingState('isTyping', true)
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current)
-    }
-    typingTimeoutRef.current = setTimeout(() => {
-      updateTypingState('isTyping', false)
-    }, 500)
+
+    const { correctCount, incorrectCount } = determineCorrectness(value, textContent)
+    updateTypingState('totalChars', value.length)
+    updateTypingState('correctChars', correctCount)
+    updateTypingState('incorrectChars', incorrectCount)
   }, [])
 
   const handleFocus = () => {
