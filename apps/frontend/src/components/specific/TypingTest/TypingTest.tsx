@@ -11,32 +11,47 @@ const textContent =
 const TypingTest: FC<IProps> = (): JSX.Element => {
   const [inputValue, setInputValue] = useState('')
   const [charIndex, setCharIndex] = useState(0)
+  const [isTyping, setIsTyping] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const handleInput = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
     setInputValue(value)
     setCharIndex(value.length)
+    setIsTyping(true)
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current)
+    }
+    typingTimeoutRef.current = setTimeout(() => {
+      setIsTyping(false)
+    }, 500)
   }, [])
 
-  useEffect(() => {
+  const handleFocus = () => {
     inputRef.current?.focus()
+  }
+
+  useEffect(() => {
+    handleFocus()
   }, [])
 
   const getHighlightedText = () => {
     const words = textContent.split(' ')
     let currentIndex = 0
+    let globalCharIndex = 0
 
     return words.map((word, wordIndex) => {
-      const wordElements = word.split('').map((char, charIndex) => {
-        const globalCharIndex = currentIndex + charIndex
+      const wordElements = word.split('').map((char, charIndexInWord) => {
+        globalCharIndex = currentIndex + charIndexInWord
 
         return (
           <span
-            key={charIndex}
-            className={cn('text-gray-500 relative', {
-              'before:absolute before:rounded-sm before:-left-[2.5px] before:top-0 before:h-6 before:w-0.5 before:bg-green-500 before:content-[""] before:inline-block before:ml-0.5 before:opacity-100 before:animate-blink':
-                globalCharIndex === inputValue.length,
+            key={charIndexInWord}
+            className={cn('text-gray-500 relative inline-block', {
+              'before:absolute before:rounded-sm before:-left-[2.5px] before:top-2 before:h-6 before:w-0.5 before:bg-green-500 before:content-[""]  before:ml-0.5':
+                globalCharIndex === charIndex,
+              'before:animate-blink': globalCharIndex === charIndex && !isTyping,
               'text-white': inputValue[globalCharIndex] === char,
               'text-red-500': inputValue[globalCharIndex] !== char && globalCharIndex < inputValue.length,
             })}
@@ -50,6 +65,13 @@ const TypingTest: FC<IProps> = (): JSX.Element => {
       return (
         <div key={wordIndex} className="inline-block mr-2">
           {wordElements}
+          <span
+            className={cn('relative inline-block', {
+              'before:absolute before:rounded-sm before:-left-[2.5px] before:-top-5 before:h-6 before:w-0.5 before:bg-green-500 before:content-[""] before:ml-0.5':
+                globalCharIndex + 1 === charIndex,
+              'before:animate-blink': globalCharIndex + 1 === charIndex && !isTyping,
+            })}
+          ></span>
           {wordIndex < words.length - 1 && <span className="inline-block"> </span>}
         </div>
       )
@@ -60,7 +82,7 @@ const TypingTest: FC<IProps> = (): JSX.Element => {
     <div>
       <h1>Typing Test</h1>
       <input type="text" value={inputValue} onChange={handleInput} ref={inputRef} className="opacity-0" />
-      <div className="text-xl tracking-widest leading-10 border border-black p-2" tabIndex={0}>
+      <div className="text-xl tracking-widest leading-10 border border-black p-2" tabIndex={0} onClick={handleFocus}>
         {getHighlightedText()}
       </div>
     </div>
