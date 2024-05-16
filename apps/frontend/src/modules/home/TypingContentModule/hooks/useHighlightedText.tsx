@@ -1,7 +1,7 @@
 import { useTypingStore } from '@/store'
 import { cn } from '@/lib/utils'
 
-const useGetHighlightedText = () => {
+const useHighlightedText = () => {
   const { charIndex, inputValue, isTyping, text } = useTypingStore((state) => state)
 
   const words = text.split(' ')
@@ -45,4 +45,4 @@ const useGetHighlightedText = () => {
   })
 }
 
-export default useGetHighlightedText
+export default useHighlightedText

@@ -9,8 +9,7 @@ interface ITypingStore {
   charIndex: number
   isTyping: boolean
   isTypingStarted: boolean
-  timerDurationType: TimerOptionsType
-  timer: number
+  timerDuration: TimerOptionsType
   totalChars: number
   correctChars: number
   incorrectChars: number
@@ -23,8 +22,7 @@ const useTypingStore = create<ITypingStore>((set) => ({
   charIndex: 0,
   isTyping: false,
   isTypingStarted: false,
-  timerDurationType: 60,
-  timer: 60,
+  timerDuration: 60,
   correctChars: 0,
   totalChars: 0,
   incorrectChars: 0,

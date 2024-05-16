@@ -1,25 +1,14 @@
 'use client'
 
-import { FC, useEffect } from 'react'
-import { useTypingStore } from '@/store'
-import { useCalculateAccuracy, useCalculateWPM } from './hooks'
+import { FC } from 'react'
+import { useCalculateAccuracy, useCalculateWPM, useTimer } from './hooks'
 
 interface IProps {}
 
-const TypingContentModule: FC<IProps> = (): JSX.Element => {
-  const { timer, isTypingStarted, updateTypingState, correctChars, totalChars } = useTypingStore((state) => state)
+const AnalyticsModule: FC<IProps> = (): JSX.Element => {
   const wpm = useCalculateWPM()
   const accuracy = useCalculateAccuracy()
-
-  useEffect(() => {
-    let timerId: NodeJS.Timeout | null = null
-    if (isTypingStarted && timer > 0) {
-      timerId = setTimeout(() => updateTypingState('timer', timer - 1), 1000)
-    }
-    return () => {
-      if (timerId) clearTimeout(timerId)
-    }
-  }, [isTypingStarted, timer])
+  const timer = useTimer()
 
   return (
     <div className="flex gap-3 mt-5">
@@ -31,4 +20,4 @@ const TypingContentModule: FC<IProps> = (): JSX.Element => {
   )
 }
 
-export default TypingContentModule
+export default AnalyticsModule

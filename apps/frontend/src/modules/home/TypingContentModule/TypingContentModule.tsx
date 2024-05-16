@@ -1,53 +1,17 @@
 'use client'
 
-import { determineCorrectness } from '@/lib/utils'
 import { useTypingStore } from '@/store'
-import { ChangeEvent, FC, useCallback, useEffect, useRef } from 'react'
-import { useGetHighlightedText } from './hooks'
+import { FC } from 'react'
+import { useFocusManagement, useHighlightedText, useInputManagement } from './hooks'
 
 interface IProps {}
 
 const TypingContentModule: FC<IProps> = (): JSX.Element => {
-  const { inputValue, updateTypingState, isTypingStarted, text } = useTypingStore((state) => state)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const { inputValue } = useTypingStore((state) => state)
 
-  const highlightedText = useGetHighlightedText()
-
-  const handleInput = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target
-    updateTypingState('inputValue', value)
-    updateTypingState('charIndex', value.length)
-    updateTypingState('isTyping', true)
-
-    const { correctCount, incorrectCount } = determineCorrectness(value, text)
-    updateTypingState('totalChars', value.length)
-    updateTypingState('correctChars', correctCount)
-    updateTypingState('incorrectChars', incorrectCount)
-  }, [])
-
-  const handleFocus = () => {
-    inputRef.current?.focus()
-  }
-
-  useEffect(() => {
-    handleFocus()
-  }, [])
-
-  useEffect(() => {
-    const handleActiveFocus = () => {
-      if (document.activeElement === inputRef.current && !isTypingStarted) {
-        if (!isTypingStarted) {
-          updateTypingState('isTypingStarted', true)
-        }
-      }
-    }
-
-    inputRef.current?.addEventListener('keypress', handleActiveFocus)
-
-    return () => {
-      inputRef.current?.removeEventListener('keypress', handleActiveFocus)
-    }
-  }, [isTypingStarted])
+  const highlightedText = useHighlightedText()
+  const { handleInput } = useInputManagement()
+  const { inputRef, handleFocus } = useFocusManagement()
 
   return (
     <div>

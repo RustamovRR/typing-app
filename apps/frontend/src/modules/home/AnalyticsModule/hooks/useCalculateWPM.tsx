@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useTypingStore } from '@/store'
+import useTimer from './useTimer'
 
 const useCalculateWPM = () => {
-  const { charIndex, timerDurationType, timer, isTypingStarted } = useTypingStore((state) => state)
+  const timer = useTimer()
   const [wpm, setWpm] = useState(0)
+  const { charIndex, timerDuration, isTypingStarted } = useTypingStore((state) => state)
 
   useEffect(() => {
     if (!isTypingStarted) {
@@ -12,7 +14,7 @@ const useCalculateWPM = () => {
     }
 
     const calculateWPM = () => {
-      const timeElapsedSeconds = timerDurationType - timer
+      const timeElapsedSeconds = timerDuration - timer
       if (timeElapsedSeconds <= 0) return 0
 
       const minutes = timeElapsedSeconds / 60
