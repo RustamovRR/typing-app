@@ -20,3 +20,12 @@ export function determineCorrectness(inputValue: string, referenceText: string) 
   const incorrectCount = inputLength - correctCount
   return { correctCount, incorrectCount }
 }
+
+export function formatTime(seconds: number) {
+  const minutes = Math.floor(seconds / 60)
+  const remainingSeconds = seconds % 60
+  const formattedMinutes = minutes.toString().padStart(2, '0')
+  const formattedSeconds = remainingSeconds.toString().padStart(2, '0')
+
+  return minutes > 0 ? `${formattedMinutes}:${formattedSeconds}` : formattedSeconds
+}
