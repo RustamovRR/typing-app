@@ -1,1 +1,1 @@
-export type TimerOptionsType = 15 | 30 | 60 | 120
+export type TimerDurationOptionsType = 15 | 30 | 60 | 120

@@ -1,1 +1,5 @@
-export { Button } from './button'
+export { Button } from './Button'
+export { Toggle } from './Toggle'
+export { Separator } from './Separator'
+export * from './ToggleGroup'
+export * from './Tabs'

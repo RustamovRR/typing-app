@@ -1,4 +1,4 @@
-import { TimerOptionsType } from '@/types'
+import { TimerDurationOptionsType } from '@/types'
 import { create } from 'zustand'
 
 const textContent =
@@ -9,7 +9,7 @@ interface ITypingStore {
   charIndex: number
   isTyping: boolean
   isTypingStarted: boolean
-  timerDuration: TimerOptionsType
+  timerDuration: TimerDurationOptionsType
   totalChars: number
   correctChars: number
   incorrectChars: number

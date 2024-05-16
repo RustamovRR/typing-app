@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useTypingStore } from '@/store'
-import useTimer from './useTimer'
+import { useTimer } from '@/hooks'
 
 const useCalculateWPM = () => {
   const timer = useTimer()

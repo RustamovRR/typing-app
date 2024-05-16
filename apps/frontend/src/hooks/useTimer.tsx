@@ -6,6 +6,10 @@ const useTimer = () => {
   const [timer, setTimer] = useState<number>(timerDuration)
 
   useEffect(() => {
+    setTimer(timerDuration)
+  }, [timerDuration])
+
+  useEffect(() => {
     let timerId: NodeJS.Timeout | null = null
     if (isTypingStarted && timer > 0) {
       timerId = setTimeout(() => setTimer((value) => value - 1), 1000)
