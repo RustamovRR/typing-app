@@ -3,11 +3,12 @@
 import { FC, memo } from 'react'
 import { useTypingStore } from '@/store'
 import { useFocusManagement, useHighlightedText, useInputManagement } from './hooks'
+import { useShallow } from 'zustand/react/shallow'
 
 interface IProps {}
 
 const TypingContentModule: FC<IProps> = (): JSX.Element => {
-  const { inputValue } = useTypingStore((state) => state)
+  const { inputValue } = useTypingStore(useShallow(({ inputValue }) => ({ inputValue })))
 
   const highlightedText = useHighlightedText()
   const { handleInput } = useInputManagement()

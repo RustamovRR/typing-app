@@ -1,15 +1,18 @@
 import { ChangeEvent, useCallback } from 'react'
 import { useTypingStore } from '@/store'
 import { determineCorrectness } from '@/lib/utils'
+import { useShallow } from 'zustand/react/shallow'
 
 const useInputManagement = () => {
-  const { updateTypingState, text } = useTypingStore((state) => state)
+  const { text, updateTypingState } = useTypingStore(
+    useShallow(({ text, updateTypingState }) => ({ text, updateTypingState })),
+  )
 
   const handleInput = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target
       updateTypingState('inputValue', value)
-      updateTypingState('charIndex', value.length)
+      updateTypingState('valueLength', value.length)
       updateTypingState('isTyping', true)
 
       const { correctCount, incorrectCount } = determineCorrectness(value, text)

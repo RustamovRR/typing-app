@@ -11,7 +11,9 @@ import { useCalculateAccuracy, useCalculateWPM } from '@/hooks/common'
 interface IProps {}
 
 const AnalyticsHeaderModule: FC<IProps> = (): JSX.Element => {
-  const { timerDuration, updateTypingState } = useTypingStore(useShallow((state) => state))
+  const { timerDuration, updateTypingState } = useTypingStore(
+    useShallow(({ timerDuration, updateTypingState }) => ({ timerDuration, updateTypingState })),
+  )
   const wpm = useCalculateWPM()
   const accuracy = useCalculateAccuracy()
 

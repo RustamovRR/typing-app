@@ -4,9 +4,12 @@ import { useTimer } from '@/hooks/common'
 import { useTypingStore } from '@/store'
 import { AnalyticsModule, TypingContentModule, TypingSettingsModule } from '@/modules/home'
 import { formatTime } from '@/lib/utils'
+import { useShallow } from 'zustand/react/shallow'
 
 export default function Home() {
-  const { isTypingStarted } = useTypingStore((state) => state)
+  const { isTypingStarted, isTypingFinished } = useTypingStore(
+    useShallow(({ isTypingStarted, isTypingFinished }) => ({ isTypingStarted, isTypingFinished })),
+  )
   const timer = useTimer()
   const timerInMinutes = formatTime(timer)
 
@@ -14,22 +17,26 @@ export default function Home() {
     <main className="p-24">
       <h1 className="text-4xl font-semibold">Typing app</h1>
       <div>
-        {isTypingStarted ? (
-          <div className="text-center animate-fade-in">
-            <h1 className="text-6xl">{timerInMinutes} </h1>
-          </div>
-        ) : (
-          <div className="animate-fade-out">
+        {!isTypingStarted && !isTypingFinished && (
+          <div className="animate-fade-in">
             <TypingSettingsModule />
           </div>
         )}
-        {timer === 0 ? (
+        {isTypingStarted && !isTypingFinished && (
+          <div className="text-center animate-fade-in">
+            <h1 className="text-6xl">{timerInMinutes}</h1>
+          </div>
+        )}
+
+        {!isTypingFinished && (
+          <div className="animate-fade-in">
+            <TypingContentModule />
+          </div>
+        )}
+
+        {isTypingFinished && (
           <div className="animate-fade-in">
             <AnalyticsModule />
-          </div>
-        ) : (
-          <div className="animate-fade-out">
-            <TypingContentModule />
           </div>
         )}
       </div>

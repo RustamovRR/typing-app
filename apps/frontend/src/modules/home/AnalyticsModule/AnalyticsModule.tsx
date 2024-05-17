@@ -1,6 +1,6 @@
 'use client'
 
-import { FC } from 'react'
+import { FC, memo } from 'react'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui'
 import { TIMER_DURATION_OPTIONS } from '@/constants'
 import { useTypingStore } from '@/store'
@@ -10,8 +10,13 @@ import { useCalculateAccuracy, useCalculateWPM } from '@/hooks/common'
 
 interface IProps {}
 
-const AnalyticsBodyModule: FC<IProps> = (): JSX.Element => {
-  const { timerDuration, updateTypingState } = useTypingStore(useShallow((state) => state))
+const AnalyticsModule: FC<IProps> = (): JSX.Element => {
+  const { timerDuration, updateTypingState } = useTypingStore(
+    useShallow(({ timerDuration, updateTypingState }) => ({
+      timerDuration,
+      updateTypingState,
+    })),
+  )
   const wpm = useCalculateWPM()
   const accuracy = useCalculateAccuracy()
 
@@ -41,4 +46,4 @@ const AnalyticsBodyModule: FC<IProps> = (): JSX.Element => {
   )
 }
 
-export default AnalyticsBodyModule
+export default memo(AnalyticsModule)

@@ -1,30 +1,21 @@
-import { useEffect, useState } from 'react'
 import { useTypingStore } from '@/store'
-import useTimer from './useTimer'
+import { useShallow } from 'zustand/react/shallow'
 
 const useCalculateWPM = () => {
-  const timer = useTimer()
-  const [wpm, setWpm] = useState(0)
-  const { charIndex, timerDuration, isTypingStarted } = useTypingStore((state) => state)
+  const { timerDuration, isTypingStarted, correctChars } = useTypingStore(
+    useShallow(({ timerDuration, isTypingStarted, correctChars }) => ({
+      timerDuration,
+      isTypingStarted,
+      correctChars,
+    })),
+  )
 
-  useEffect(() => {
-    if (!isTypingStarted) {
-      setWpm(0)
-      return
-    }
+  if (!isTypingStarted) {
+    return
+  }
 
-    const calculateWPM = () => {
-      const timeElapsedSeconds = timerDuration - timer
-      if (timeElapsedSeconds <= 0) return 0
-
-      const minutes = timeElapsedSeconds / 60
-      return charIndex / 5 / minutes
-    }
-
-    setWpm(calculateWPM())
-  }, [charIndex, timer, isTypingStarted])
-
-  return Math.floor(wpm)
+  const minutes = timerDuration / 60
+  return correctChars / 5 / minutes
 }
 
 export default useCalculateWPM

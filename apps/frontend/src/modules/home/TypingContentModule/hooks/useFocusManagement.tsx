@@ -1,8 +1,14 @@
 import { useEffect, useRef } from 'react'
 import { useTypingStore } from '@/store'
+import { useShallow } from 'zustand/react/shallow'
 
 const useFocusManagement = () => {
-  const { isTypingStarted, updateTypingState } = useTypingStore((state) => state)
+  const { isTypingStarted, updateTypingState } = useTypingStore(
+    useShallow(({ isTypingStarted, updateTypingState }) => ({
+      isTypingStarted,
+      updateTypingState,
+    })),
+  )
   const inputRef = useRef<HTMLInputElement>(null)
 
   const handleFocus = () => {

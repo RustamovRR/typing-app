@@ -1,8 +1,16 @@
 import { useEffect, useState } from 'react'
 import { useTypingStore } from '@/store'
+import { useShallow } from 'zustand/react/shallow'
 
 const useTimer = () => {
-  const { isTypingStarted, timerDuration } = useTypingStore((state) => state)
+  const { isTypingStarted, timerDuration, isTypingFinished, updateTypingState } = useTypingStore(
+    useShallow(({ isTypingStarted, timerDuration, isTypingFinished, updateTypingState }) => ({
+      isTypingStarted,
+      timerDuration,
+      isTypingFinished,
+      updateTypingState,
+    })),
+  )
   const [timer, setTimer] = useState<number>(timerDuration)
 
   useEffect(() => {
@@ -18,6 +26,12 @@ const useTimer = () => {
       if (timerId) clearTimeout(timerId)
     }
   }, [isTypingStarted, timer])
+
+  useEffect(() => {
+    if (timer === 0 && !isTypingFinished) {
+      updateTypingState('isTypingFinished', true)
+    }
+  }, [timer])
 
   return timer
 }
