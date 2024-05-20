@@ -10,7 +10,7 @@ const AnalyticsModule: FC<IProps> = (): JSX.Element => {
   const accuracy = useCalculateAccuracy()
 
   return (
-    <div className="mt-5 animate-fade-in">
+    <div className="animate-fade-in">
       <div className="w-3/5 mx-auto flex items-center gap-3">
         <h1>Anayltics Test</h1>
         <div>WPM: {wpm}</div>

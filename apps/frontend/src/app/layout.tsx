@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter as FontSans } from 'next/font/google'
 import { ThemeProvider } from '@/components/theme-provider'
 import { cn } from '@/lib/utils'
+import { FooterModule, HeaderModule } from '@/modules/layout'
 import './globals.css'
 
 const fontSans = FontSans({
@@ -21,9 +22,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>
+      <body
+        className={cn(
+          'flex flex-col justify-beteen min-h-screen bg-background font-sans antialiased py-8 px-20',
+          fontSans.variable,
+        )}
+      >
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          {children}
+          <header className="sticky top-0 z-10">
+            <HeaderModule />
+          </header>
+          <main className="flex-1">{children}</main>
+          <footer>
+            <FooterModule />
+          </footer>
         </ThemeProvider>
       </body>
     </html>

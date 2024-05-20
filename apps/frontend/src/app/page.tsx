@@ -14,32 +14,29 @@ export default function Home() {
   const timerInMinutes = formatTime(timer)
 
   return (
-    <main className="p-24">
-      <h1 className="text-4xl font-semibold">Typing app</h1>
-      <div>
-        {!isTypingStarted && !isTypingFinished && (
-          <div className="animate-fade-in">
-            <TypingSettingsModule />
-          </div>
-        )}
-        {isTypingStarted && !isTypingFinished && (
-          <div className="text-center animate-fade-in">
-            <h1 className="text-6xl">{timerInMinutes}</h1>
-          </div>
-        )}
+    <div className="mt-6">
+      {!isTypingStarted && !isTypingFinished && (
+        <div className="animate-fade-in">
+          <TypingSettingsModule />
+        </div>
+      )}
+      {isTypingStarted && !isTypingFinished && (
+        <div className="text-center animate-fade-in">
+          <h1 className="text-6xl">{timerInMinutes}</h1>
+        </div>
+      )}
 
-        {!isTypingFinished && (
-          <div className="animate-fade-in">
-            <TypingContentModule />
-          </div>
-        )}
+      {!isTypingFinished && (
+        <div className="animate-fade-in">
+          <TypingContentModule />
+        </div>
+      )}
 
-        {isTypingFinished && (
-          <div className="animate-fade-in">
-            <AnalyticsModule />
-          </div>
-        )}
-      </div>
-    </main>
+      {isTypingFinished && (
+        <div className="animate-fade-in">
+          <AnalyticsModule />
+        </div>
+      )}
+    </div>
   )
 }
