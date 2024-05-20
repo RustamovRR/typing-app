@@ -8,7 +8,7 @@ import { useShallow } from 'zustand/react/shallow'
 interface IProps {}
 
 const TypingContentModule: FC<IProps> = (): JSX.Element => {
-  const { inputValue } = useTypingStore(useShallow(({ inputValue }) => ({ inputValue })))
+  const { inputValue } = useTypingStore(useShallow(({ inputValue, text }) => ({ inputValue, text })))
 
   const highlightedText = useHighlightedText()
   const { handleInput } = useInputManagement()

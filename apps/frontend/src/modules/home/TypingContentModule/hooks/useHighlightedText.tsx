@@ -1,22 +1,37 @@
+import { useEffect } from 'react'
 import { useTypingStore } from '@/store'
-import { cn } from '@/lib/utils'
+import { cn, splitTextByWordCount } from '@/lib/utils'
 import { useShallow } from 'zustand/react/shallow'
 
 const useHighlightedText = () => {
-  const { valueLength, inputValue, isTyping, text } = useTypingStore(
-    useShallow(({ valueLength, inputValue, isTyping, text }) => ({
+  const { valueLength, inputValue, isTyping, text, currentTextPartIndex, updateTypingState } = useTypingStore(
+    useShallow(({ valueLength, inputValue, isTyping, text, currentTextPartIndex, updateTypingState }) => ({
       valueLength,
       inputValue,
       isTyping,
       text,
+      currentTextPartIndex,
+      updateTypingState,
     })),
   )
+  const textParts = splitTextByWordCount(text)
+  const textPartsLength = Object.keys(textParts).length
+  const currentPart = textParts[currentTextPartIndex]
 
-  const words = text.split(' ')
+  useEffect(() => {
+    if (inputValue.length > currentPart.length) {
+      const newPartIndex = currentTextPartIndex < textPartsLength - 1 ? currentTextPartIndex + 1 : 0
+      updateTypingState('currentTextPartIndex', newPartIndex)
+      updateTypingState('inputValue', '')
+      updateTypingState('valueLength', 0)
+    }
+  }, [inputValue, currentPart, currentTextPartIndex, textPartsLength])
+
+  const words = currentPart?.split(' ')
   let currentIndex = 0
   let globalCharIndex = 0
 
-  return words.map((word, wordIndex) => {
+  return words?.map((word, wordIndex) => {
     const wordElements = word.split('').map((char, charIndexInWord) => {
       globalCharIndex = currentIndex + charIndexInWord
 

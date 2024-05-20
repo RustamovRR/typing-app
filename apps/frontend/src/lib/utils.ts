@@ -34,3 +34,16 @@ export function formatTime(seconds: number): string {
 
   return `${formattedMinutes}:${formattedSeconds}`
 }
+
+export function splitTextByWordCount(text: string, wordCount: number = 20) {
+  const lines = text.split(' ')
+  const parts: Record<number, string> = {}
+  let currentIndex = 0
+
+  while (currentIndex * wordCount < lines.length) {
+    parts[currentIndex] = lines.slice(currentIndex * wordCount, (currentIndex + 1) * wordCount).join(' ')
+    currentIndex++
+  }
+
+  return parts
+}
