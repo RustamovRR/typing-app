@@ -16,6 +16,7 @@ interface ITypingStore {
   incorrectChars: number
   text: string
   currentTextPartIndex: number
+  isCurrentCharCorrect: boolean
   updateTypingState: <K extends keyof Omit<ITypingStore, 'updateTypingState'>>(key: K, value: ITypingStore[K]) => void
 }
 
@@ -31,6 +32,7 @@ const useTypingStore = create<ITypingStore>((set) => ({
   incorrectChars: 0,
   text: textContent,
   currentTextPartIndex: 0,
+  isCurrentCharCorrect: true,
   updateTypingState: (key, value) => {
     set({ [key]: value })
   },

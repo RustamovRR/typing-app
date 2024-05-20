@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useTypingStore } from '@/store'
 import { cn, splitTextByWordCount } from '@/lib/utils'
 import { useShallow } from 'zustand/react/shallow'
+import { useTypingSound } from '@/hooks/common'
 
 const useHighlightedText = () => {
   const { valueLength, inputValue, isTyping, text, currentTextPartIndex, updateTypingState } = useTypingStore(
@@ -14,6 +15,8 @@ const useHighlightedText = () => {
       updateTypingState,
     })),
   )
+  const { playTypingSound, playErrorSound } = useTypingSound()
+
   const textParts = splitTextByWordCount(text)
   const textPartsLength = Object.keys(textParts).length
   const currentPart = textParts[currentTextPartIndex]
@@ -26,6 +29,24 @@ const useHighlightedText = () => {
       updateTypingState('valueLength', 0)
     }
   }, [inputValue, currentPart, currentTextPartIndex, textPartsLength])
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key.length === 1) {
+        const correctChar = currentPart[valueLength] === event.key
+        if (correctChar) {
+          playTypingSound()
+        } else {
+          playErrorSound()
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [currentPart, valueLength, playTypingSound, playErrorSound])
 
   const words = currentPart?.split(' ')
   let currentIndex = 0
