@@ -36,9 +36,6 @@ const SettingsHeader = () => {
             </TabsTrigger>
           ))}
         </TabsList>
-        <TabsContent value="theme" className="animate-fade-in">
-          Themes
-        </TabsContent>
         <TabsContent value="sound" className="mt-4 flex flex-col gap-4">
           {SOUND_SETTINGS_TYPE_OPTIONS.map(({ label: soundLabel, value: soundValue }) => (
             <div key={soundValue} className="w-3/5 flex items-center justify-between animate-fade-in">

@@ -1,5 +1,4 @@
 export enum ESettings {
-  'theme',
   'sound',
 }
 export type SettingsType = keyof typeof ESettings

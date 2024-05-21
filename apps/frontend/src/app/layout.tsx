@@ -22,14 +22,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={cn(
-          'flex flex-col justify-beteen min-h-screen bg-background font-sans antialiased',
-          fontSans.variable,
-        )}
-      >
+      <body className={cn('bg-background font-sans antialiased', fontSans.variable)}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          <div className="container py-8 px-20">
+          <div className="container flex flex-col justify-between min-h-screen py-8 px-20">
             <header className="sticky top-0 z-10">
               <HeaderModule />
             </header>
