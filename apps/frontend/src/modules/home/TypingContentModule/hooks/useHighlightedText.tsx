@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useTypingStore } from '@/store'
+import { useSoundStore, useTypingStore } from '@/store'
 import { cn, splitTextByWordCount } from '@/lib/utils'
 import { useShallow } from 'zustand/react/shallow'
 import { useTypingSound } from '@/hooks/common'
@@ -15,6 +15,13 @@ const useHighlightedText = () => {
       updateTypingState,
     })),
   )
+  const { isDisabledTypingSound, isDisabledErrorTypingSound } = useSoundStore(
+    useShallow(({ isDisabledTypingSound, isDisabledErrorTypingSound }) => ({
+      isDisabledTypingSound,
+      isDisabledErrorTypingSound,
+    })),
+  )
+
   const { playTypingSound, playErrorSound } = useTypingSound()
 
   const textParts = splitTextByWordCount(text)
@@ -35,9 +42,9 @@ const useHighlightedText = () => {
       if (event.key.length === 1) {
         const correctChar = currentPart[valueLength] === event.key
         if (correctChar) {
-          playTypingSound()
+          !isDisabledTypingSound && playTypingSound()
         } else {
-          playErrorSound()
+          !isDisabledErrorTypingSound && playErrorSound()
         }
       }
     }

@@ -3,10 +3,23 @@
 import React, { useState } from 'react'
 import { Switch, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
 import { SETTINGS_TYPE_OPTIONS, SOUND_SETTINGS_TYPE_OPTIONS } from '@/constants'
-import { SettingsType } from '@/types'
+import { SettingsType, SoundSettingsType } from '@/types'
+import { useSoundStore } from '@/store'
+import { useShallow } from 'zustand/react/shallow'
 
 const SettingsHeader = () => {
   const [activeTab, setActiveTab] = useState<SettingsType>('sound')
+  const { isDisabledTypingSound, isDisabledErrorTypingSound, updateSoundStore } = useSoundStore(
+    useShallow((state) => state),
+  )
+
+  const handleChangeSwitch = (key: SoundSettingsType, value: boolean) => {
+    if (key === 'typing') {
+      updateSoundStore('isDisabledTypingSound', value)
+    } else if (key === 'error-typing') {
+      updateSoundStore('isDisabledErrorTypingSound', value)
+    }
+  }
 
   return (
     <div className="flex items-center gap-4 animate-fade-in">
@@ -31,7 +44,11 @@ const SettingsHeader = () => {
             <div key={soundValue} className="w-3/5 flex items-center justify-between animate-fade-in">
               <h2 className="text-xl">{soundLabel}</h2>
               <section className="flex items-center">
-                <Switch id="typing-sound"></Switch>
+                <Switch
+                  id="typing-sound"
+                  checked={soundValue === 'typing' ? isDisabledTypingSound : isDisabledErrorTypingSound}
+                  onCheckedChange={(checked) => handleChangeSwitch(soundValue, checked)}
+                ></Switch>
               </section>
             </div>
           ))}

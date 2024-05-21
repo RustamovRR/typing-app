@@ -1,5 +1,5 @@
-import { TimerDurationOptionsType } from '@/types'
 import { create } from 'zustand'
+import { TimerDurationOptionsType } from '@/types'
 
 const textContent =
   'Typing is a skill that requires practice and dedication. The more you type, the faster and more accurate you become. Regular practice with varied texts can significantly improve your speed and reduce errors. Keep challenging yourself with different passages to enhance your typing proficiency'

@@ -24,18 +24,20 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          'flex flex-col justify-beteen min-h-screen bg-background font-sans antialiased py-8 px-20',
+          'flex flex-col justify-beteen min-h-screen bg-background font-sans antialiased',
           fontSans.variable,
         )}
       >
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          <header className="sticky top-0 z-10">
-            <HeaderModule />
-          </header>
-          <main className="flex-1">{children}</main>
-          <footer>
-            <FooterModule />
-          </footer>
+          <div className="container py-8 px-20">
+            <header className="sticky top-0 z-10">
+              <HeaderModule />
+            </header>
+            <main className="flex-1">{children}</main>
+            <footer>
+              <FooterModule />
+            </footer>
+          </div>
         </ThemeProvider>
       </body>
     </html>

@@ -1,13 +1,19 @@
 import React from 'react'
 import Link from 'next/link'
+import { Theme } from './components'
 
 const HeaderModule = () => {
   return (
-    <div className="flex items-center gap-4">
-      <Link href="/" className="text-4xl font-semibold">
-        Typing app
-      </Link>
-      <Link href="/settings">Sozlamalar</Link>
+    <div className="flex items-center justify-between">
+      <section className="flex items-center gap-4">
+        <Link href="/" className="text-4xl font-semibold">
+          Typing app
+        </Link>
+        <Link href="/settings">Sozlamalar</Link>
+      </section>
+      <section>
+        <Theme />
+      </section>
     </div>
   )
 }
