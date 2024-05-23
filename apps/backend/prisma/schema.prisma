@@ -12,3 +12,18 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model TypingContent {
+  id         Int        @id @default(autoincrement())
+  title      String
+  content    String
+  createdAt  DateTime   @default(now())
+  duration   Int
+  difficulty Difficulty
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
