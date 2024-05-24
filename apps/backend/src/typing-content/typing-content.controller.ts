@@ -10,7 +10,7 @@ import {
 import { TypingContentService } from './typing-content.service';
 import { TypingContent as TypingContentModel } from '@prisma/client';
 
-@Controller('typing-content')
+@Controller('api/typing-content')
 export class TypingContentController {
   constructor(private readonly typingContentService: TypingContentService) {}
 
@@ -24,7 +24,6 @@ export class TypingContentController {
   @Get()
   async getTypingContents(): Promise<TypingContentModel[]> {
     return this.typingContentService.getTypingContents();
-    // return await [{content:}]
   }
 
   @Get(':id')

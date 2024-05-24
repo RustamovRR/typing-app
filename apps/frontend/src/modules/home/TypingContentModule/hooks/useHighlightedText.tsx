@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useSoundStore, useTypingStore } from '@/store'
-import { cn, splitTextByWordCount } from '@/lib/utils'
+import { splitTextByWordCount, cn } from '@/utils'
 import { useShallow } from 'zustand/react/shallow'
 import { useTypingSound } from '@/hooks/common'
 

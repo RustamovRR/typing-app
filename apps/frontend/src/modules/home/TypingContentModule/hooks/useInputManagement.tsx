@@ -1,6 +1,6 @@
 import { ChangeEvent, useCallback } from 'react'
 import { useTypingStore } from '@/store'
-import { determineCorrectness } from '@/lib/utils'
+import { determineCorrectness } from '@/utils'
 import { useShallow } from 'zustand/react/shallow'
 
 const useInputManagement = () => {
