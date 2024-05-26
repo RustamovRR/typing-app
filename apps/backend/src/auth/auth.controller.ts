@@ -6,6 +6,7 @@ import { AuthGuard } from '@nestjs/passport';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  /// GOOGLE AUTH
   @Get('google')
   @UseGuards(AuthGuard('google'))
   async googleAuth(@Req() req) {}
@@ -15,5 +16,17 @@ export class AuthController {
   async googleAuthRedirect(@Req() req) {
     const jwt = this.authService.generateJwt(req.user);
     return { message: 'User infromation from Google', user: req.user, jwt };
+  }
+
+  /// GOOGLE AUTH
+  @Get('github')
+  @UseGuards(AuthGuard('github'))
+  async githubAuth(@Req() req) {}
+
+  @Get('github/callback')
+  @UseGuards(AuthGuard('github'))
+  async githubAuthRedirect(@Req() req) {
+    const jwt = this.authService.generateJwt(req.user);
+    return { message: 'User infromation from Github', user: req.user, jwt };
   }
 }
