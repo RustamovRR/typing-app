@@ -14,12 +14,43 @@ datasource db {
 }
 
 model TypingContent {
-  id         Int        @id @default(autoincrement())
-  title      String
-  content    String
-  createdAt  DateTime   @default(now())
-  duration   Int
-  difficulty Difficulty
+  id           Int            @id @default(autoincrement())
+  title        String
+  content      String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @default(now()) @updatedAt
+  duration     Int
+  difficulty   Difficulty
+  category     String?
+  isActive     Boolean?       @default(true)
+  userProgress UserProgress[]
+}
+
+model UserProgress {
+  id              Int       @id @default(autoincrement())
+  userId          Int
+  typingContentId Int
+  completedAt     DateTime?
+  accuracy        Float
+  wpm             Int
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @default(now()) @updatedAt
+
+  TypingContent TypingContent @relation(fields: [typingContentId], references: [id])
+  User          User          @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([typingContentId])
+}
+
+model User {
+  id        Int            @id @default(autoincrement())
+  name      String
+  email     String         @unique
+  password  String
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @default(now()) @updatedAt
+  progress  UserProgress[]
 }
 
 enum Difficulty {
