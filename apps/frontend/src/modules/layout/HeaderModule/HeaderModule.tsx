@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { Theme } from './components'
+import { Theme, AuthButton } from './components'
 
 const HeaderModule = () => {
   return (
@@ -11,8 +11,9 @@ const HeaderModule = () => {
         </Link>
         <Link href="/settings">Sozlamalar</Link>
       </section>
-      <section>
+      <section className="flex gap-3">
         <Theme />
+        <AuthButton />
       </section>
     </div>
   )

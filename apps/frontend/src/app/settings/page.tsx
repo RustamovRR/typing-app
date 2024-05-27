@@ -1,6 +1,6 @@
 import { SettingsHeader } from '@/modules/settings'
 
-const Settings = () => {
+const SettingsPage = () => {
   return (
     <div className="mt-6">
       <SettingsHeader />
@@ -8,4 +8,4 @@ const Settings = () => {
   )
 }
 
-export default Settings
+export default SettingsPage
