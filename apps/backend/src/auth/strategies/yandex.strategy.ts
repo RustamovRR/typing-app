@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, VerifyCallback, Profile } from 'passport-google-oauth20';
+import { Strategy, Profile } from 'passport-yandex';
 
 @Injectable()
-export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
+export class YandexStrategy extends PassportStrategy(Strategy, 'yandex') {
   constructor() {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: `${process.env.BASE_URL}/auth/google/callback`,
+      callbackURL: `${process.env.BASE_URL}/auth/yandex/callback`,
       scope: ['email', 'profile'],
     });
   }
@@ -17,14 +17,15 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     accessToken: string,
     refreshToken: string,
     profile: Profile,
-    done: VerifyCallback,
+    done: Function,
   ): Promise<any> {
-    const { name, emails, photos } = profile;
+    const { username, emails, gender, photos, displayName } = profile;
     const user = {
+      username,
+      displayName,
       email: emails[0].value,
-      firstName: name.givenName,
-      lastName: name.familyName,
       photos: photos[0].value,
+      gender,
       accessToken,
     };
     done(null, user);

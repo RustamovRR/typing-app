@@ -18,7 +18,7 @@ export class AuthController {
     return { message: 'User infromation from Google', user: req.user, jwt };
   }
 
-  /// GOOGLE AUTH
+  /// GITHUB AUTH
   @Get('github')
   @UseGuards(AuthGuard('github'))
   async githubAuth(@Req() req) {}
@@ -28,5 +28,41 @@ export class AuthController {
   async githubAuthRedirect(@Req() req) {
     const jwt = this.authService.generateJwt(req.user);
     return { message: 'User infromation from Github', user: req.user, jwt };
+  }
+
+  /// LINKEDIN AUTH
+  @Get('linkedin')
+  @UseGuards(AuthGuard('linkedin'))
+  async linkedinAuth(@Req() req) {}
+
+  @Get('linkedin/callback')
+  @UseGuards(AuthGuard('linkedin'))
+  async linkedinAuthRedirect(@Req() req) {
+    const jwt = this.authService.generateJwt(req.user);
+    return { message: 'User infromation from Linkedin', user: req.user, jwt };
+  }
+
+  /// YANDEX AUTH
+  @Get('yandex')
+  @UseGuards(AuthGuard('yandex'))
+  async yandexAuth(@Req() req) {}
+
+  @Get('yandex/callback')
+  @UseGuards(AuthGuard('yandex'))
+  async yandexAuthRedirect(@Req() req) {
+    const jwt = this.authService.generateJwt(req.user);
+    return { message: 'User infromation from Yandex', user: req.user, jwt };
+  }
+
+  /// FACEBOOK AUTH
+  @Get('facebook')
+  @UseGuards(AuthGuard('facebook'))
+  async facebookAuth(@Req() req) {}
+
+  @Get('facebook/callback')
+  @UseGuards(AuthGuard('facebook'))
+  async facebookAuthRedirect(@Req() req) {
+    const jwt = this.authService.generateJwt(req.user);
+    return { message: 'User infromation from Facebook', user: req.user, jwt };
   }
 }
