@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
-import { UserRegisterDto } from 'src/dto';
+import { UserAuthDto, UserReturnDto } from 'src/dto';
 import { getErrorMessage } from 'src/utils';
 import { LanguageType } from 'src/types';
 
@@ -19,7 +19,10 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, pass: string): Promise<any> {
+  async validateUser(
+    email: string,
+    pass: string,
+  ): Promise<Omit<UserReturnDto, 'access_token'>> {
     const user = await this.userService.findOne(email);
     if (user && (await bcrypt.compare(pass, user.password))) {
       const { password, ...result } = user;
@@ -28,7 +31,10 @@ export class AuthService {
     return null;
   }
 
-  async login(loginDto: UserRegisterDto, lang: LanguageType): Promise<any> {
+  async login(
+    loginDto: UserAuthDto,
+    lang: LanguageType,
+  ): Promise<UserReturnDto> {
     try {
       const user = await this.userService.findOne(loginDto.email);
       if (!user) {
@@ -68,18 +74,21 @@ export class AuthService {
     }
   }
 
-  async register(
-    registerDto: UserRegisterDto,
-    lang: LanguageType,
-  ): Promise<any> {
+  async register(registerDto: UserAuthDto, lang: LanguageType): Promise<any> {
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
     try {
       const user = await this.userService.createUser({
         ...registerDto,
         password: hashedPassword,
       });
+
       const { password, ...result } = user;
-      return result;
+      const payload = { sub: user.id, email: user.email };
+
+      return {
+        ...result,
+        access_token: await this.jwtService.signAsync(payload),
+      };
     } catch (error) {
       if (
         error.code === 'P2002' &&

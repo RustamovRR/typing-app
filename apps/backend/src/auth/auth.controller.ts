@@ -5,42 +5,57 @@ import {
   HttpStatus,
   Post,
   Req,
-  Request,
-  Response,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { UserRegisterDto } from 'src/dto';
+import { UserAuthDto } from 'src/dto';
 import { AuthGuard } from '@nestjs/passport';
-import { Request as RequestType, Response as ResponseType } from 'express';
-import { LocalAuthGuard } from './guards/local-auth.guard';
+import { Request, Response } from 'express';
+import { COOKIE_EXPIRY_DATE } from 'src/constants';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Post('register')
-  register(@Body() registerDto: UserRegisterDto, @Request() req: RequestType) {
-    const lang = req.headers['accept-language'] === 'uz' ? 'uz' : 'en';
-    return this.authService.register(registerDto, lang);
-  }
-
   @Post('login')
-  @UseGuards(LocalAuthGuard)
+  // @UseGuards(LocalAuthGuard)
   async login(
-    @Body() loginDto: UserRegisterDto,
-    @Request() req: RequestType,
-    @Response() res: ResponseType,
+    @Body() loginDto: UserAuthDto,
+    @Req() req: Request,
+    @Res() res: Response,
   ) {
     const lang = req.headers['accept-language'] === 'uz' ? 'uz' : 'en';
-    const result = await this.authService.login(loginDto, lang);
-    return res.status(HttpStatus.OK).send(result);
+    const { access_token } = await this.authService.login(loginDto, lang);
+    res.cookie('access_token', access_token, {
+      httpOnly: true,
+      maxAge: COOKIE_EXPIRY_DATE,
+    });
+    return res.status(HttpStatus.OK).json({ message: 'Login successful' });
+  }
+
+  @Post('register')
+  async register(
+    @Body() registerDto: UserAuthDto,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    const lang = req.headers['accept-language'] === 'uz' ? 'uz' : 'en';
+    const { access_token, ...result } = await this.authService.register(
+      registerDto,
+      lang,
+    );
+    res.cookie('access_token', access_token, {
+      httpOnly: true,
+      maxAge: COOKIE_EXPIRY_DATE,
+    });
+    return res.status(HttpStatus.CREATED).json(result);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  getProfile(@Request() req) {
+  getProfile(@Req() req) {
     return req.user;
   }
 
