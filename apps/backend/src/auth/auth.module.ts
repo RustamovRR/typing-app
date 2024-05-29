@@ -5,18 +5,28 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { GithubStrategy } from './strategies/github.strategy';
-import { YandexStrategy } from './strategies/yandex.strategy';
-import { FacebookStrategy } from './strategies/facebook.strategy';
+import { UserModule } from 'src/user/user.module';
+import { LocalStrategy } from './strategies/local.strategy';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
-    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
+      global: true,
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '24h' },
     }),
+    PassportModule,
+    UserModule,
   ],
-  providers: [AuthService, GoogleStrategy, GithubStrategy, FacebookStrategy],
+  providers: [
+    AuthService,
+    GoogleStrategy,
+    GithubStrategy,
+    LocalStrategy,
+    JwtStrategy,
+  ],
   controllers: [AuthController],
+  exports: [AuthService],
 })
 export class AuthModule {}

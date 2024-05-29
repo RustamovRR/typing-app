@@ -4,6 +4,8 @@ import React, { useState } from 'react'
 import { GithubIcon, GoogleIcon } from '@/assets/icons'
 import { Button, Input, Label, PasswordInput } from '@/components/ui'
 import { useTheme } from 'next-themes'
+import Link from 'next/link'
+import { BASE_URL } from '@/constants'
 
 const RegisterModule = () => {
   const [password, setPassword] = useState('')
@@ -51,13 +53,17 @@ const RegisterModule = () => {
         </div>
       </section>
       <section className="flex flex-col gap-3">
-        <Button className="gap-2" size="sm" variant={theme === 'dark' ? 'default' : 'outline'} >
-          <GoogleIcon />
-          <span>Google orqali ro'yxatdan o'tish</span>
+        <Button size="sm" variant={theme === 'dark' ? 'default' : 'outline'}>
+          <Link href={`${BASE_URL}/auth/google`} className="flex items-center justify-center gap-2 w-full h-full">
+            <GoogleIcon />
+            <span>Google orqali ro'yxatdan o'tish</span>
+          </Link>
         </Button>
-        <Button className="gap-2" size="sm" variant={theme === 'dark' ? 'default' : 'outline'}>
-          <GithubIcon />
-          <span>Github orqali ro'yxatdan o'tish</span>
+        <Button size="sm" variant={theme === 'dark' ? 'default' : 'outline'}>
+          <Link href={`${BASE_URL}/auth/github`} className="flex items-center justify-center gap-2 w-full h-full">
+            <GithubIcon />
+            <span>Github orqali ro'yxatdan o'tish</span>
+          </Link>
         </Button>
       </section>
     </div>
