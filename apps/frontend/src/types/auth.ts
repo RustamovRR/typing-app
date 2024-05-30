@@ -6,16 +6,17 @@ export interface ILoginRegisterParams {
 export interface ILoginResponse {
   error?: string
   message: string
-  status?: number
+  status: boolean
   statusCode?: number
 }
 
 export interface IRegisterResponse {
-  refresh: string
-  access: string
-  username: string
-  first_name: string
-  last_name: string
+  id: number
   email: string
-  avatar: string
+  username: string
+  fullName: string | null
+  status: boolean
+  createdAt: string
+  updatedAt: string
+  message?: string
 }

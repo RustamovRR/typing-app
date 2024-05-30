@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC } from 'react'
 import { GithubIcon, GoogleIcon } from '@/assets/icons'
 import {
   Button,
@@ -10,18 +10,14 @@ import {
   FormMessage,
   Input,
   PasswordInput,
-  useToast,
 } from '@/components/ui'
 import { useTheme } from 'next-themes'
 import Link from 'next/link'
 import { BASE_URL } from '@/constants'
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { cn } from '@/utils'
-import { useLoginMutation, useUserRegisterMutation } from '@/hooks/mutations'
-import { CircleCheck, CircleX, Loader2 } from 'lucide-react'
-import { useAppStore } from '@/store'
+import { Loader2 } from 'lucide-react'
+import { useAuthForm } from '../hooks'
+import { z } from 'zod'
 
 interface IProps {
   isLoginForm?: boolean
@@ -29,46 +25,10 @@ interface IProps {
 
 const AuthForm: FC<IProps> = ({ isLoginForm = false }) => {
   const { theme } = useTheme()
-  const { updateAppStore } = useAppStore((state) => state)
-  const { mutateAsync: loginAsync, isPending: isLoginPending } = useLoginMutation()
-  const { mutateAsync: registerAsync, isPending: isRegisterPending } = useUserRegisterMutation()
-  const { toast } = useToast()
+  const { form, formSchema, handleAuth, isLoginPending, isRegisterPending } = useAuthForm()
 
-  useEffect(() => {
-    updateAppStore('isLoading', isLoginPending || isRegisterPending)
-  }, [isLoginPending, isRegisterPending])
-
-  const formSchema = z.object({
-    email: z.string().email({ message: 'Emailni kiritish majburiy!' }),
-    password: z
-      .string({ message: 'Parolni kiritish majburiy!' })
-      .min(6, { message: "Parol kamida 6 belgidan iborat bo'lishi kerak!" }),
-  })
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
-  })
-
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (isLoginForm) {
-      const { message, status } = await loginAsync(values)
-      toast({
-        title: (
-          <div className="flex items-center gap-2">
-            {status ? <CircleCheck className="text-green-500 rounded-xl" /> : <CircleX className="" />}
-            <span>{message}</span>
-          </div>
-        ),
-        duration: 2000,
-        variant: status ? 'default' : 'destructive',
-      })
-    } else {
-      await registerAsync(values)
-    }
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    handleAuth(values, isLoginForm)
   }
 
   return (
@@ -133,12 +93,12 @@ const AuthForm: FC<IProps> = ({ isLoginForm = false }) => {
               >
                 {(isLoginPending || isRegisterPending) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isLoginForm
-                  ? 'Kirish'
-                  : isLoginPending
+                  ? isLoginPending
                     ? 'Kirilmoqda...'
-                    : isRegisterPending
-                      ? "Ro'yxatdan o'tilmoqda..."
-                      : "Ro'yxatdan o'tish"}
+                    : 'Kirish'
+                  : isRegisterPending
+                    ? "Ro'yxatdan o'tilmoqda..."
+                    : "Ro'yxatdan o'tish"}
               </Button>
             </div>
           </form>

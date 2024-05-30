@@ -5,7 +5,7 @@
     "apps/*"
   ],
   "scripts": {
-    "lint": "eslint \"apps/frontend/**/*.{ts,tsx,js,jsx}\" \"apps/backend/src/**/*.{ts,tsx}\" --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint \"apps/frontend/src/**/*.{ts,tsx,js,jsx}\" \"apps/backend/src/**/*.{ts,tsx}\" --report-unused-disable-directives --max-warnings 0 --fix",
     "format": "prettier \"apps/frontend/src/**/*.{tsx,ts,jsx,js,json}\" \"apps/backend/src/**/*.{tsx,ts,jsx,js,json}\" --write"
   },
   "keywords": [],
