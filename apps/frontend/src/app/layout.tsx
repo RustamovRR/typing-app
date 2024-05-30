@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter as FontSans } from 'next/font/google'
 import { FooterModule, HeaderModule } from '@/modules/layout'
 import { ThemeProvider } from '@/providers'
+import { Toaster } from '@/components/ui'
 import { cn } from '@/utils'
 import './globals.css'
 
@@ -29,6 +30,7 @@ export default function RootLayout({
               <HeaderModule />
             </header>
             <main className="flex-1 flex items-center justify-center h-full">{children}</main>
+            <Toaster />
             <footer>
               <FooterModule />
             </footer>

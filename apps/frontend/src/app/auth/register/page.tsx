@@ -1,11 +1,16 @@
+'use client'
+
 import { RegisterModule } from '@/modules/auth'
-import React from 'react'
+import { queryClient } from '@/providers'
+import { QueryClientProvider } from '@tanstack/react-query'
 
 const RegisterPage = () => {
   return (
-    <div className="w-full h-full flex items-center justify-center">
-      <RegisterModule />
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <div className="w-full h-full flex items-center justify-center">
+        <RegisterModule />
+      </div>
+    </QueryClientProvider>
   )
 }
 

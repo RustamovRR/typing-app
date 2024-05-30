@@ -15,7 +15,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
 import { COOKIE_EXPIRY_DATE } from 'src/constants';
 
-@Controller('auth')
+@Controller('api/auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
@@ -26,13 +26,15 @@ export class AuthController {
     @Req() req: Request,
     @Res() res: Response,
   ) {
-    const lang = req.headers['accept-language'] === 'uz' ? 'uz' : 'en';
+    const lang = req.headers['accept-language'] === 'en' ? 'en' : 'uz';
     const { access_token } = await this.authService.login(loginDto, lang);
     res.cookie('access_token', access_token, {
       httpOnly: true,
       maxAge: COOKIE_EXPIRY_DATE,
     });
-    return res.status(HttpStatus.OK).json({ message: 'Login successful' });
+    return res
+      .status(HttpStatus.OK)
+      .json({ status: true, message: 'Login successful' });
   }
 
   @Post('register')
@@ -41,7 +43,7 @@ export class AuthController {
     @Req() req: Request,
     @Res() res: Response,
   ) {
-    const lang = req.headers['accept-language'] === 'uz' ? 'uz' : 'en';
+    const lang = req.headers['accept-language'] === 'en' ? 'en' : 'uz';
     const { access_token, ...result } = await this.authService.register(
       registerDto,
       lang,
@@ -50,7 +52,7 @@ export class AuthController {
       httpOnly: true,
       maxAge: COOKIE_EXPIRY_DATE,
     });
-    return res.status(HttpStatus.CREATED).json(result);
+    return res.status(HttpStatus.CREATED).json({ status: true, ...result });
   }
 
   @UseGuards(JwtAuthGuard)

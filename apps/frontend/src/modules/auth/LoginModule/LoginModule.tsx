@@ -1,7 +1,10 @@
+'use client'
+
 import React from 'react'
+import { AuthForm } from '../components'
 
 const LoginModule = () => {
-  return <div>LoginModule</div>
+  return <AuthForm isLoginForm />
 }
 
 export default LoginModule

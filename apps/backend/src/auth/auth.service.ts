@@ -35,43 +35,43 @@ export class AuthService {
     loginDto: UserAuthDto,
     lang: LanguageType,
   ): Promise<UserReturnDto> {
-    try {
-      const user = await this.userService.findOne(loginDto.email);
-      if (!user) {
-        throw new UnauthorizedException({
-          statusCode: HttpStatus.UNAUTHORIZED,
-          ...getErrorMessage('USER_NOT_FOUND', lang),
-        });
-      }
-
-      const isPasswordValid = await bcrypt.compare(
-        loginDto.password,
-        user.password,
-      );
-      if (!isPasswordValid) {
-        throw new UnauthorizedException({
-          statusCode: HttpStatus.AMBIGUOUS,
-          ...getErrorMessage('INVALID_CREDENTIALS', lang),
-        });
-      }
-
-      const payload = { sub: user.id, email: user.email };
-      const { password, ...result } = user;
-
-      return {
-        ...result,
-        access_token: await this.jwtService.signAsync(payload),
-      };
-    } catch (error) {
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.UNAUTHORIZED,
-          ...getErrorMessage('LOGIN_PROBLEM', lang),
-          error: error.message,
-        },
-        HttpStatus.UNAUTHORIZED,
-      );
+    const user = await this.userService.findOne(loginDto.email);
+    if (!user) {
+      throw new UnauthorizedException({
+        status: false,
+        statusCode: HttpStatus.UNAUTHORIZED,
+        ...getErrorMessage('USER_NOT_FOUND', lang),
+      });
     }
+
+    const isPasswordValid = await bcrypt.compare(
+      loginDto.password,
+      user.password,
+    );
+    if (!isPasswordValid) {
+      throw new UnauthorizedException({
+        status: false,
+        statusCode: HttpStatus.AMBIGUOUS,
+        ...getErrorMessage('INVALID_CREDENTIALS', lang),
+      });
+    }
+
+    const payload = { sub: user.id, email: user.email };
+    const { password, ...result } = user;
+
+    return {
+      ...result,
+      access_token: await this.jwtService.signAsync(payload),
+    };
+
+    // throw new HttpException(
+    //   {
+    //     status: false,
+    //     statusCode: HttpStatus.UNAUTHORIZED,
+    //     ...getErrorMessage('LOGIN_PROBLEM', lang),
+    //   },
+    //   HttpStatus.UNAUTHORIZED,
+    // );
   }
 
   async register(registerDto: UserAuthDto, lang: LanguageType): Promise<any> {
@@ -96,15 +96,16 @@ export class AuthService {
         error.meta.target.includes('email')
       ) {
         throw new ConflictException({
+          status: false,
           statusCode: HttpStatus.CONFLICT,
-          ...getErrorMessage('EMAIL_ALREADY_EXISTS', lang),
+          ...getErrorMessage('USER_ALREADY_EXISTS', lang),
         });
       } else {
         throw new HttpException(
           {
+            status: false,
             statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
             ...getErrorMessage('REGISTRATION_PROBLEM', lang),
-            error: error.message,
           },
           HttpStatus.INTERNAL_SERVER_ERROR,
         );

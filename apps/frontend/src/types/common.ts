@@ -15,6 +15,12 @@ export type GetResponseType<T> = NavigationTypes & {
   results: T
 }
 
+export type GetResponseWithStatusType<T> = {
+  data: T
+  request: string
+  status: string
+}
+
 export interface IErrorResponse {
   data: any
   name: string

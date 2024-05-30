@@ -15,14 +15,11 @@ export const fetchApi = async <T, R = T>(
   const url = params && method === 'GET' ? queryStringUrl(`${BASE_API_URL}${path}`, params) : `${BASE_API_URL}${path}`
 
   const headers: HeadersInit = { 'Content-Type': 'application/json' }
-  if (withAuth) {
-    const token = getCookie('access_token')
-    headers['Authorization'] = `Bearer ${token}`
-  }
 
   const response = await fetch(url, {
     method,
     headers,
+    credentials: 'include',
     body: body && method !== 'GET' ? JSON.stringify(body) : null,
   })
 

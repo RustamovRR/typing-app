@@ -1,0 +1,181 @@
+import React, { FC, useEffect } from 'react'
+import { GithubIcon, GoogleIcon } from '@/assets/icons'
+import {
+  Button,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Input,
+  PasswordInput,
+  useToast,
+} from '@/components/ui'
+import { useTheme } from 'next-themes'
+import Link from 'next/link'
+import { BASE_URL } from '@/constants'
+import { z } from 'zod'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { cn } from '@/utils'
+import { useLoginMutation, useUserRegisterMutation } from '@/hooks/mutations'
+import { CircleCheck, CircleX, Loader2 } from 'lucide-react'
+import { useAppStore } from '@/store'
+
+interface IProps {
+  isLoginForm?: boolean
+}
+
+const AuthForm: FC<IProps> = ({ isLoginForm = false }) => {
+  const { theme } = useTheme()
+  const { updateAppStore } = useAppStore((state) => state)
+  const { mutateAsync: loginAsync, isPending: isLoginPending } = useLoginMutation()
+  const { mutateAsync: registerAsync, isPending: isRegisterPending } = useUserRegisterMutation()
+  const { toast } = useToast()
+
+  useEffect(() => {
+    updateAppStore('isLoading', isLoginPending || isRegisterPending)
+  }, [isLoginPending, isRegisterPending])
+
+  const formSchema = z.object({
+    email: z.string().email({ message: 'Emailni kiritish majburiy!' }),
+    password: z
+      .string({ message: 'Parolni kiritish majburiy!' })
+      .min(6, { message: "Parol kamida 6 belgidan iborat bo'lishi kerak!" }),
+  })
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  })
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (isLoginForm) {
+      const { message, status } = await loginAsync(values)
+      toast({
+        title: (
+          <div className="flex items-center gap-2">
+            {status ? <CircleCheck className="text-green-500 rounded-xl" /> : <CircleX className="" />}
+            <span>{message}</span>
+          </div>
+        ),
+        duration: 2000,
+        variant: status ? 'default' : 'destructive',
+      })
+    } else {
+      await registerAsync(values)
+    }
+  }
+
+  return (
+    <div className="sm:w-[350px] mb-20">
+      <section className="flex flex-col space-y-2 text-center">
+        <h1 className="text-2xl font-semibold tracking-tight">
+          {isLoginForm ? 'Akkountga kirish' : 'Yangi akkount ochish'}
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          {isLoginForm ? 'Akkountga kirish' : 'Yangi akkount ochish'} uchun pastda elektron pochtangizni kiriting
+        </p>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="flex flex-col gap-5">
+              <div className="flex flex-col gap-4">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field, fieldState: { invalid } }) => (
+                    <FormItem className="flex flex-col items-start">
+                      <FormLabel htmlFor="email">Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="email"
+                          className={cn('h-9', { 'border-red-500': invalid })}
+                          id="email"
+                          placeholder="name@example.com"
+                          autoComplete="email"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field, fieldState: { invalid } }) => (
+                    <FormItem className="flex flex-col text-start">
+                      <FormLabel htmlFor="password">Parol</FormLabel>
+                      <FormControl>
+                        <PasswordInput
+                          {...field}
+                          type="password"
+                          className={cn('h-9', { 'border-red-500': invalid })}
+                          id="password"
+                          placeholder="12345678"
+                          autoComplete="new-password"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <Button
+                size="sm"
+                type="submit"
+                variant={theme === 'dark' ? 'default' : 'outline'}
+                disabled={isLoginPending || isRegisterPending}
+              >
+                {(isLoginPending || isRegisterPending) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isLoginForm
+                  ? 'Kirish'
+                  : isLoginPending
+                    ? 'Kirilmoqda...'
+                    : isRegisterPending
+                      ? "Ro'yxatdan o'tilmoqda..."
+                      : "Ro'yxatdan o'tish"}
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </section>
+      <section className="relative my-6">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t"></span>
+        </div>
+        <div className="flex justify-center relative text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">Yoki ushbular orqali</span>
+        </div>
+      </section>
+      <section className="flex flex-col gap-3">
+        <Button
+          size="sm"
+          variant={theme === 'dark' ? 'default' : 'outline'}
+          disabled={isLoginPending || isRegisterPending}
+        >
+          <Link href={`${BASE_URL}/auth/google`} className="flex items-center justify-center gap-2 w-full h-full">
+            {isLoginPending || isRegisterPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon />}
+            <span>Google orqali {isLoginForm ? 'kirish' : "ro'yxatdan o'tish"}</span>
+          </Link>
+        </Button>
+        <Button
+          size="sm"
+          variant={theme === 'dark' ? 'default' : 'outline'}
+          disabled={isLoginPending || isRegisterPending}
+        >
+          <Link href={`${BASE_URL}/auth/github`} className="flex items-center justify-center gap-2 w-full h-full">
+            {isLoginPending || isRegisterPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GithubIcon />}
+            <span>Github orqali {isLoginForm ? 'kirish' : "ro'yxatdan o'tish"}</span>
+          </Link>
+        </Button>
+      </section>
+    </div>
+  )
+}
+
+export default AuthForm
