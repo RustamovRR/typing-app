@@ -1,6 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, Profile } from 'passport-github2';
+import { Injectable } from '@nestjs/common'
+import { PassportStrategy } from '@nestjs/passport'
+import { User } from '@prisma/client'
+import { Strategy, Profile } from 'passport-github2'
+import { UserReturnDto } from 'src/dto'
 
 @Injectable()
 export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
@@ -10,24 +12,19 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
       callbackURL: `${process.env.BASE_URL}/auth/github/callback`,
       scope: ['user:email'],
-    });
+    })
   }
 
-  async validate(
-    accessToken: string,
-    refreshToken: string,
-    profile: Profile,
-    done: Function,
-  ): Promise<any> {
-    const { username, emails, photos, name, displayName } = profile;
-    const user = {
+  async validate(accessToken: string, refreshToken: string, profile: Profile, done: any): Promise<any> {
+    const { username, emails, photos, displayName } = profile
+
+    const user: Partial<UserReturnDto> = {
       username,
-      name,
-      displayName,
+      fullName: displayName,
       email: emails[0].value,
-      photos: photos[0].value,
+      photo: photos[0].value,
       accessToken,
-    };
-    done(null, user);
+    }
+    done(null, user)
   }
 }

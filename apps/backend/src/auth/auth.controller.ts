@@ -1,64 +1,72 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpStatus,
-  Post,
-  Req,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { UserAuthDto } from 'src/dto';
-import { AuthGuard } from '@nestjs/passport';
-import { Request, Response } from 'express';
-import { COOKIE_EXPIRY_DATE } from 'src/constants';
+import { Body, Controller, Get, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common'
+import { AuthService } from './auth.service'
+import { JwtAuthGuard } from './guards/jwt-auth.guard'
+import { CreateUserDto, UserAuthDto, UserReturnDto } from 'src/dto'
+import { AuthGuard } from '@nestjs/passport'
+import { Request, Response } from 'express'
+import { COOKIE_EXPIRY_DATE } from 'src/constants'
+import { AuthProvidersType } from 'src/types'
 
-@Controller('api/auth')
+@Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  private getLang(req: Request): 'en' | 'uz' {
+    return req.headers['accept-language'] === 'en' ? 'en' : 'uz'
+  }
+
+  private async handleOAuthRedirect(req: Request, res: Response, provider: AuthProvidersType) {
+    const lang = this.getLang(req)
+    const profile = req.user as CreateUserDto
+    try {
+      if (!profile) {
+        console.warn(`${provider} callback did not provide user data.`)
+        return res.status(HttpStatus.BAD_REQUEST).json({
+          status: false,
+          message: `Email is required but was not provided by ${provider}.`,
+        })
+      }
+      const { accessToken, ...result } = await this.authService.validateOauthLogin(profile, provider, lang)
+      res.cookie('accessToken', accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: COOKIE_EXPIRY_DATE,
+      })
+      res.redirect(`${process.env.FRONT_BASE_URL}`)
+    } catch (error) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        status: false,
+        message: 'Failed to process the login',
+      })
+    }
+  }
+
   @Post('login')
-  // @UseGuards(LocalAuthGuard)
-  async login(
-    @Body() loginDto: UserAuthDto,
-    @Req() req: Request,
-    @Res() res: Response,
-  ) {
-    const lang = req.headers['accept-language'] === 'en' ? 'en' : 'uz';
-    const { access_token } = await this.authService.login(loginDto, lang);
-    res.cookie('access_token', access_token, {
+  async login(@Body() loginDto: UserAuthDto, @Req() req: Request, @Res() res: Response) {
+    const lang = this.getLang(req)
+    const { accessToken } = await this.authService.login(loginDto, lang)
+    res.cookie('accessToken', accessToken, {
       httpOnly: true,
       maxAge: COOKIE_EXPIRY_DATE,
-    });
-    return res
-      .status(HttpStatus.OK)
-      .json({ status: true, message: 'Login successful' });
+    })
+    return res.status(HttpStatus.OK).json({ status: true, message: 'Login successful' })
   }
 
   @Post('register')
-  async register(
-    @Body() registerDto: UserAuthDto,
-    @Req() req: Request,
-    @Res() res: Response,
-  ) {
-    const lang = req.headers['accept-language'] === 'en' ? 'en' : 'uz';
-    const { access_token, ...result } = await this.authService.register(
-      registerDto,
-      lang,
-    );
-    res.cookie('access_token', access_token, {
+  async register(@Body() registerDto: UserAuthDto, @Req() req: Request, @Res() res: Response) {
+    const lang = this.getLang(req)
+    const { accessToken, ...result } = await this.authService.register(registerDto, lang)
+    res.cookie('accessToken', accessToken, {
       httpOnly: true,
       maxAge: COOKIE_EXPIRY_DATE,
-    });
-    return res.status(HttpStatus.CREATED).json({ status: true, ...result });
+    })
+    return res.status(HttpStatus.CREATED).json({ status: true, ...result })
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Req() req) {
-    return req.user;
+    return req.user
   }
 
   /// GOOGLE AUTH
@@ -68,8 +76,9 @@ export class AuthController {
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
-  async googleAuthRedirect(@Req() req) {
-    return { message: 'User infromation from Google', user: req.user };
+  async googleAuthRedirect(@Req() req, @Res() res: Response) {
+    return this.handleOAuthRedirect(req, res, 'google')
+    // res.send({ message: 'User infromation from Github', user: req.user })
   }
 
   /// GITHUB AUTH
@@ -79,40 +88,8 @@ export class AuthController {
 
   @Get('github/callback')
   @UseGuards(AuthGuard('github'))
-  async githubAuthRedirect(@Req() req) {
-    return { message: 'User infromation from Github', user: req.user };
+  async githubAuthRedirect(@Req() req, @Res() res: Response) {
+    this.handleOAuthRedirect(req, res, 'github')
+    // res.send({ message: 'User infromation from Github', user: req.user })
   }
-
-  /// LINKEDIN AUTH
-  // @Get('linkedin')
-  // @UseGuards(AuthGuard('linkedin'))
-  // async linkedinAuth(@Req() req) {}
-
-  // @Get('linkedin/callback')
-  // @UseGuards(AuthGuard('linkedin'))
-  // async linkedinAuthRedirect(@Req() req) {
-  //   return { message: 'User infromation from Linkedin', user: req.user };
-  // }
-
-  // /// YANDEX AUTH
-  // @Get('yandex')
-  // @UseGuards(AuthGuard('yandex'))
-  // async yandexAuth(@Req() req) {}
-
-  // @Get('yandex/callback')
-  // @UseGuards(AuthGuard('yandex'))
-  // async yandexAuthRedirect(@Req() req) {
-  //   return { message: 'User infromation from Yandex', user: req.user };
-  // }
-
-  // /// FACEBOOK AUTH
-  // @Get('facebook')
-  // @UseGuards(AuthGuard('facebook'))
-  // async facebookAuth(@Req() req) {}
-
-  // @Get('facebook/callback')
-  // @UseGuards(AuthGuard('facebook'))
-  // async facebookAuthRedirect(@Req() req) {
-  //   return { message: 'User infromation from Facebook', user: req.user };
-  // }
 }

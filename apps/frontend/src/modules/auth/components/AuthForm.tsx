@@ -18,6 +18,7 @@ import { cn } from '@/utils'
 import { Loader2 } from 'lucide-react'
 import { useAuthForm } from '../hooks'
 import { z } from 'zod'
+import { useUserProfileQuery } from '@/hooks/queries'
 
 interface IProps {
   isLoginForm?: boolean
@@ -26,6 +27,8 @@ interface IProps {
 const AuthForm: FC<IProps> = ({ isLoginForm = false }) => {
   const { theme } = useTheme()
   const { form, formSchema, handleAuth, isLoginPending, isRegisterPending } = useAuthForm()
+  const { data } = useUserProfileQuery()
+  console.log(data)
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     handleAuth(values, isLoginForm)

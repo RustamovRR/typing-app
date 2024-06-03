@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -18,26 +12,25 @@ model TypingContent {
   title        String
   content      String
   createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @default(now()) @updatedAt
   duration     Int
   difficulty   Difficulty
   category     String?
   isActive     Boolean?       @default(true)
+  updatedAt    DateTime       @default(now()) @updatedAt
   userProgress UserProgress[]
 }
 
 model UserProgress {
-  id              Int       @id @default(autoincrement())
+  id              Int           @id @default(autoincrement())
   userId          Int
   typingContentId Int
   completedAt     DateTime?
   accuracy        Float
   wpm             Int
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @default(now()) @updatedAt
-
-  TypingContent TypingContent @relation(fields: [typingContentId], references: [id])
-  User          User          @relation(fields: [userId], references: [id])
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @default(now()) @updatedAt
+  TypingContent   TypingContent @relation(fields: [typingContentId], references: [id])
+  User            User          @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([typingContentId])
@@ -45,12 +38,14 @@ model UserProgress {
 
 model User {
   id        Int            @id @default(autoincrement())
-  username  String?        @unique
   email     String         @unique
-  fullName  String?
   password  String
+  provider  String?
   createdAt DateTime       @default(now())
   updatedAt DateTime       @default(now()) @updatedAt
+  fullName  String?
+  username  String?        @unique
+  photo     String?
   progress  UserProgress[]
 }
 

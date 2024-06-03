@@ -6,7 +6,7 @@ interface IAppStore {
 }
 
 const useAppStore = create<IAppStore>((set) => ({
-  isLoading: true,
+  isLoading: false,
   updateAppStore: (key, value) => {
     set({ [key]: value })
   },
