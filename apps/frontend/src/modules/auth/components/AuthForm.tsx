@@ -13,12 +13,11 @@ import {
 } from '@/components/ui'
 import { useTheme } from 'next-themes'
 import Link from 'next/link'
-import { BASE_URL } from '@/constants'
+import { BASE_API_URL, BASE_URL } from '@/constants'
 import { cn } from '@/utils'
 import { Loader2 } from 'lucide-react'
 import { useAuthForm } from '../hooks'
 import { z } from 'zod'
-import { useUserProfileQuery } from '@/hooks/queries'
 
 interface IProps {
   isLoginForm?: boolean
@@ -27,8 +26,6 @@ interface IProps {
 const AuthForm: FC<IProps> = ({ isLoginForm = false }) => {
   const { theme } = useTheme()
   const { form, formSchema, handleAuth, isLoginPending, isRegisterPending } = useAuthForm()
-  const { data } = useUserProfileQuery()
-  console.log(data)
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     handleAuth(values, isLoginForm)
@@ -121,7 +118,7 @@ const AuthForm: FC<IProps> = ({ isLoginForm = false }) => {
           variant={theme === 'dark' ? 'default' : 'outline'}
           disabled={isLoginPending || isRegisterPending}
         >
-          <Link href={`${BASE_URL}/auth/google`} className="flex items-center justify-center gap-2 w-full h-full">
+          <Link href={`${BASE_API_URL}/auth/google`} className="flex items-center justify-center gap-2 w-full h-full">
             {isLoginPending || isRegisterPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon />}
             <span>Google orqali {isLoginForm ? 'kirish' : "ro'yxatdan o'tish"}</span>
           </Link>
@@ -131,7 +128,7 @@ const AuthForm: FC<IProps> = ({ isLoginForm = false }) => {
           variant={theme === 'dark' ? 'default' : 'outline'}
           disabled={isLoginPending || isRegisterPending}
         >
-          <Link href={`${BASE_URL}/auth/github`} className="flex items-center justify-center gap-2 w-full h-full">
+          <Link href={`${BASE_API_URL}/auth/github`} className="flex items-center justify-center gap-2 w-full h-full">
             {isLoginPending || isRegisterPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GithubIcon />}
             <span>Github orqali {isLoginForm ? 'kirish' : "ro'yxatdan o'tish"}</span>
           </Link>

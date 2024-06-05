@@ -17,7 +17,6 @@ export type GetResponseType<T> = NavigationTypes & {
 
 export type GetResponseWithStatusType<T> = {
   data: T
-  request: string
   status: string
 }
 

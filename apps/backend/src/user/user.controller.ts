@@ -16,14 +16,14 @@ export class UserController {
     const accessToken = cookies['accessToken']
 
     if (!accessToken) {
-      return res.status(HttpStatus.UNAUTHORIZED).send({ status: 'error', message: 'No access token provided' })
+      return res.status(HttpStatus.UNAUTHORIZED).send({ status: false, message: 'No access token provided' })
     }
 
     try {
       const decoded = this.jwtService.verify(accessToken, { secret: process.env.JWT_SECRET })
       const { password, ...user } = await this.userService.findOneById(decoded.sub)
       if (!user) {
-        return res.status(HttpStatus.NOT_FOUND).send({ status: 'error', message: 'User not found' })
+        return res.status(HttpStatus.NOT_FOUND).send({ status: false, message: 'User not found' })
       }
       res.send({ status: true, data: user })
     } catch (error) {
