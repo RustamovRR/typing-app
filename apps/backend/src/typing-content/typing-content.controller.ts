@@ -9,7 +9,9 @@ import {
 } from '@nestjs/common';
 import { TypingContentService } from './typing-content.service';
 import { TypingContent as TypingContentModel } from '@prisma/client';
+import { Public } from 'src/constants';
 
+@Public()
 @Controller('api/typing-content')
 export class TypingContentController {
   constructor(private readonly typingContentService: TypingContentService) {}
