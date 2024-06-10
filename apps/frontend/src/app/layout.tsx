@@ -4,6 +4,7 @@ import { FooterModule, HeaderModule } from '@/modules/layout'
 import { ThemeProvider } from '@/providers'
 import { Toaster } from '@/components/ui'
 import { cn } from '@/utils'
+import { TanstackQueryProvider } from '@/providers'
 import './globals.css'
 
 const fontSans = FontSans({
@@ -26,14 +27,16 @@ export default function RootLayout({
       <body className={cn('bg-background font-sans antialiased', fontSans.variable)}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           <div className="container flex flex-col justify-between h-screen py-8 px-20">
-            <header className="sticky top-0 z-10">
-              <HeaderModule />
-            </header>
-            <main className="flex-1 flex items-center justify-center h-full">{children}</main>
-            <Toaster />
-            <footer>
-              <FooterModule />
-            </footer>
+            <TanstackQueryProvider>
+              <header className="sticky top-0 z-10">
+                <HeaderModule />
+              </header>
+              <main className="flex-1 flex items-center justify-center h-full">{children}</main>
+              <Toaster />
+              <footer>
+                <FooterModule />
+              </footer>
+            </TanstackQueryProvider>
           </div>
         </ThemeProvider>
       </body>

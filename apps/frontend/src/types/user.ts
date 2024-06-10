@@ -2,7 +2,7 @@ export interface IUser {
   id: number
   email: string
   username: string
-  fullName?: string
+  fullName: string
   status: boolean
   createdAt: string
   updatedAt: string

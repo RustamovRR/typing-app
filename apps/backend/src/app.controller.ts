@@ -1,6 +1,5 @@
-import { Controller, Get, Post, UseGuards } from '@nestjs/common';
-import { AppService } from './app.service';
-import { AuthGuard } from '@nestjs/passport';
+import { Controller } from '@nestjs/common'
+import { AppService } from './app.service'
 
 @Controller()
 export class AppController {
